@@ -118,11 +118,11 @@ Se puede pasar la herramienta de autoorrección tantas veces como se desee sin n
 
 Una vez satisfecho con su calificación, el alumno puede subir su entrega a Moodle con el siguiente comando:
 ```
-$ autocorector upload
+$ autocorector --upload
 ```
 o, si se ha instalado como paquete local:
 ```
-$ npx autocorector upload
+$ npx autocorector --upload
 ```
 
 La herramienta de autocorrección preguntará por el correo del alumno y el token de Moodle. En el enlace [https://www.npmjs.com/package/autocorector](https://www.npmjs.com/package/autocorector) se proveen instrucciones para encontrar dicho token.
