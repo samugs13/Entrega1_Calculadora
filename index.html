@@ -3,20 +3,260 @@
 <head>
   <title>Calculadora</title>
   <meta charset="utf-8">
+  <style>
+      * {font-size: medium; font-family: 'Courier New', Courier, monospace;
+        background-color:wheat;
+      }
+
+      .boton {background-color:coral; text-align: center; color: black; width: 45px;
+      height: 45px; border: double black 3px; flex: 1;
+      }
+
+      .botonm {background-color:coral; text-align: center; color: black; width: 45px;
+      height: 45px; border: double black 3px; flex: 1;
+      }
+
+      .botong {background-color:coral; text-align: center; color: black; width: 110px;
+      height: 40px; border: double black 3px; flex: 1;
+      }
+
+      .line {display: flex; align-items: stretch;}
+      
+      #general {display: flex; flex: 1; flex-direction: column;}
+      #pantalla {display: flex; flex:1; background-color: black; color: #33ff00; }
+      #info {color:blueviolet; margin-top: 20px; text-align: center;}
+
+  </style>
   <script type="text/javascript">
+
     const vaciar = () => {
-      document.getElementById("pantalla").value = "";
+      rellenar("");
     }
 
-    const cuadrado = () => {
-      let num = document.getElementById("pantalla");
-      num.value = num.value * num.value;
+    const numero = () => {
+      return Number(document.getElementById("pantalla").value);
     }
+
+    const numeros = () => document.getElementById("pantalla").value.split(",").map(Number);
+
+    const rellenar = (v) => {
+      document.getElementById("pantalla").value = v;
+    }
+
+    const rellenar_info = () => {
+      const n = numero ();
+      
+      if(Number.isNaN(n)){
+        msg="ERROR";
+      } else {
+
+        if (n<100) {
+          msg="Info: El resultado es menor que 100";
+        } else if (n>200) {
+          msg="Info: El resultado es superior a 200";
+        } else {
+          msg="Info: El resultado está entre 100 y 200";
+        }
+      }
+      document.getElementById("info").innerHTML=msg;
+    }
+
+
+    //OPERACIONES UNITARIAS
+    const cuadrado = () => {
+      if (!validar()) return;
+      let num = numero();
+      rellenar(num * num);
+      rellenar_info();
+    }
+
+    const mod = () => {
+      if (!validar()) return;
+      let num = numero();
+      rellenar(Math.abs(num));
+      rellenar_info();
+    }
+
+    const fact = () => {
+      if (!validar()) return;
+      let num = numero();
+      let res = 1;
+      for (let i = num; i>1; i--){
+        res*=i;
+      }
+      rellenar(res);
+      rellenar_info();
+    }
+
+
+    //OPERACIONES BINARIAS
+    let acumulador = 0;
+    let operador = "";
+
+    const acumula = n => {
+      switch (operador){
+          case"":
+          acumulador = n;
+          break;
+
+          case"+":
+          acumulador += n;
+          break;
+
+          case"-":
+          acumulador -= n;
+          break;
+
+          case"*":
+          acumulador *= n;
+          break;
+
+          case"/":
+          acumulador /= n;
+          break;
+
+          case"=":
+          acumulador = n;
+          break;
+         
+      }
+    }
+
+    const add = () => {
+      if (!validar()) return;
+      acumula(numero());
+      operador="+";
+      vaciar();
+      rellenar_info();
+    }
+
+    const mul = () => {
+      if (!validar()) return;
+      acumula(numero());
+      operador="*";
+      vaciar();
+      rellenar_info();
+    }
+
+    const resta = () => {
+      if (!validar()) return;
+      acumula(numero());
+      operador="-";
+      vaciar();
+      rellenar_info();
+    }
+
+    const div = () => {
+      if (!validar()) return;
+      acumula(nmero());
+      operador="/";
+      vaciar();
+     rellenar_info();
+    }
+
+    const eq = () => {
+      if (!validar()) return;
+      acumula(numero());
+      operador="=";
+      rellenar(acumulador);
+      rellenar_info();
+    }
+
+    //OPERACIONES FORMATO CSV
+    const sumatorio = () => {
+      if (!validarCSV()) return;
+      let array = numeros();
+      let res = 0;
+      for (let i=0; i<array.length; i++) {
+        let ant = 0;
+        res += array[i]
+      }
+      rellenar(res);
+      rellenar_info();
+    }
+
+    const compara = (a,b) => {
+        if (a > b) {
+        return 1;
+      } else if (b > a) {
+        return -1;
+      } else {
+        return 0;
+      }
+    } 
+
+    const ordenar = () => {
+      if (!validarCSV()) return;
+      let array = numeros();
+      rellenar(array.sort(compara));
+      rellenar_info();
+    }
+
+    const revertir = () => {
+      if (!validarCSV()) return;
+      let array = numeros();
+      rellenar(array.reverse());
+      rellenar_info();
+    }
+
+    const quitar = () => {
+      if (!validarCSV()) return;
+      let array = numeros();
+      rellenar(array.slice(0,-1));
+      rellenar_info();
+    }
+
+    //TRATAMIENTO DE ERRORES
+    const validar = () => {
+      let data = numero();
+      if (Number.isNaN(data)){
+        rellenar("Error");
+        return false;
+      } else {return true;}
+    }
+    
+    const validarCSV = () => {
+      if (numeros().some(Number.isNaN)){
+        rellenar("Error");
+        return false;
+      } else {return true;}
+
+    }
+      
+      
+
   </script>
 </head>
 <body>
+
+<div id="general">
+
   Número:
   <input type="text" id="pantalla" onclick="vaciar()">
-  <button id="cuadrado" onclick="cuadrado()">x<sup>2</sup></button>
- </body>
+
+  <div class="line">
+    <button id="suma" class="boton" onclick="add()">+</button>
+    <button id="resta" class="boton" onclick="resta()">-</button>
+    <button id="multiplicacion" class="boton" onclick="mul()">*</button>
+    <button id="division" class="boton" onclick="div()">/</button>
+  </div>
+
+  <div class="line">
+    <button id="igual" class="boton" onclick="eq()">=</button>
+    <button id="cuadrado" class="botonm" onclick="cuadrado()">x²</button>
+    <button id="modulo" class="botonm" onclick="mod()">abs</button>
+    <button id="factorial" class="botonm" onclick="fact()">x!</button>
+   </div>
+
+   <div class="line">
+    <button id="sumatorio" class="botong" onclick="sumatorio()">Sumatorio</button>
+    <button id="ordenar" class="botong" onclick="ordenar()">Ordenar</button>
+    <button id="revertir" class="botong" onclick="revertir()">Revertir</button>
+    <button id="quitar" class="botong" onclick="quitar()">Quitar</button>
+   </div>
+
+  <h2 id="info" class="grande" title="Info sobre el número">Info sobre el número</h2>
+
+</div>
+</body>
 </html>
